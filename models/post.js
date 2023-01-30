@@ -5,7 +5,8 @@ const PostSchema = new Schema({
   title: { type: String, maxLength: 64, required: true },
   content: { type: String, required: true },
   date: { type: String, required: true },
-  comments: { type: Array  }
+  comments: { type: Array  },
+  hidden: { type: Boolean, default: false }
   // author? seems redundant
 });
 

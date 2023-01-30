@@ -1,11 +1,18 @@
-var createError = require('http-errors');
+// var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const routes = require('./routes');
+// var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
+
+require('dotenv').config();
+mongoose.connect(process.env.mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB Connection Error: '));
 
 var app = express();
 
@@ -16,10 +23,14 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+// app.use('/', routes.view);
+app.use('/api', routes.api);
+// app.use('/', indexRouter.view);
+// app.use('/api', indexRouter.api);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -39,3 +50,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+// Would be nice if could use the API to interact with our DB, views should only query the DB
