@@ -6,7 +6,10 @@ const PostSchema = new Schema({
   content: { type: String, required: true },
   date: { type: String, required: true },
   comments: { type: Array  },
-  hidden: { type: Boolean, default: false }
+  hidden: { type: Boolean, default: false },
+
+  edited: { type: Boolean, default: false },
+  dateEdited: { type: String },
   // author? seems redundant
 });
 

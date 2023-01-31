@@ -52,3 +52,8 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 // Would be nice if could use the API to interact with our DB, views should only query the DB
+
+// CURL NOTES
+//  - curl defaults to GET http method, use -X to set other http methods like so: -X POST, -X PUT, -X DELETE
+//    WHEN USING THE API FOR POST AND PUT, YOU MUST INCLUDE THE PROPER HEADER BY USING -H
+//      -H "Content-Type:application/json"
