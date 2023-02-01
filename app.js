@@ -29,8 +29,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/', routes.view);
 app.use('/api', routes.api);
-// app.use('/', indexRouter.view);
-// app.use('/api', indexRouter.api);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -57,3 +55,4 @@ module.exports = app;
 //  - curl defaults to GET http method, use -X to set other http methods like so: -X POST, -X PUT, -X DELETE
 //    WHEN USING THE API FOR POST AND PUT, YOU MUST INCLUDE THE PROPER HEADER BY USING -H
 //      -H "Content-Type:application/json"
+//  Example: curl -X POST -H 'Content-Type:application/json' localhost:3000/api/messages -d '{"title":"NEW POST TITLE","content":"NEW POST CONTENT"}'
