@@ -6,7 +6,6 @@ const PostSchema = new Schema({
   content: { type: String, required: true },
   date: { type: String, required: true },
   // comments: { type: Array  },
-  // comments property is depracted, now we have a seperate collection for comments, and we use the post's id to lookup it's comments, comments.owner should equal post id
   // comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   hidden: { type: Boolean, default: false },
 
@@ -15,6 +14,7 @@ const PostSchema = new Schema({
   // author? seems redundant
 });
 
+// not sure if this actually works
 PostSchema.virtual('url').get(function() {
   return '/posts/' + this._id
 })

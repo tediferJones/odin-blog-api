@@ -23,7 +23,11 @@ router.get('/posts/:id', function(req, res, next) {
     .then((response) => response.text())
     .then((post) => {
       res.render('post', { title: 'POST WITH COMMENTS', post })
-    })
-})
+    });
+});
+
+router.post('/posts/:id', function(req, res, next) {
+  // undo all everything
+});
 
 module.exports = router;
