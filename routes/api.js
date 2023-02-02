@@ -12,17 +12,29 @@ const Comment = require('../models/comment');
 // router.get('/', function(req, res, next) {
 //   // res.render('index', { title: 'Express' });
 //   res.redirect('/posts')
-
 // });
 
 router.get('/posts', function(req, res, next) {
+  // RE WRITE THIS, should deliver posts as an array of objects, each object should include the post and all its comments
   Post.find({}).exec(function (err, posts) {
     if (err) { return next(err) }
-    res.send(`${posts} \n`);
+    res.send(posts);
   });
 });
 
 // NEED ROUTER.GET FOR /POSTS/:id TO SHOW COMMENTS
+// or just fetch /post/:id/comments
+router.get('/posts/:id', function(req, res, next) {
+  // if (err) { return next(err); }
+  Post.findById(req.params.id).exec(function(err, post) {
+    if (err) { return next(err); }
+    Comment.find({ owner: req.params.id }).exec(function(err, comments) {
+      if (err) { return next(err); }
+      data = { post, comments }
+      res.send(data)
+    })
+  })
+})
 
 router.post('/posts', [//function (req, res, next) {
   //  NEED TO SANITIZE INPUTS, validation is taken care of by models
@@ -40,7 +52,7 @@ router.post('/posts', [//function (req, res, next) {
       content: req.body.content,
       date: new Date().toDateString() + ' at ' + new Date().toLocaleTimeString(),
       // we get probably get rid of the 'comments' field now that we have a comments collection
-      comments: [], // new post cant already have comments, so just initialize an empty array
+      // comments: [], // new post cant already have comments, so just initialize an empty array
     });
     newPost.save((err) => {
       if (err) { return next(err); }
@@ -84,9 +96,13 @@ router.put('/posts/:id', [
 ]);
 
 router.delete('/posts/:id', function(req, res, next) {
+  // this will apparently work
   Post.findByIdAndDelete(req.params.id).exec(function(err, post) {
     if (err) { return next(err); }
-    res.send(`DELETED POST: ${post} \n`)
+    Comment.deleteMany({ owner: req.params.id}).exec(function(err, comments) {
+      res.send(`DELETED POST: ${post} \n DELETED COMMENTS: ${comments} \n`)
+    })
+    // res.send(`DELETED POST: ${post} \n`)
   })
 });
 
@@ -96,7 +112,7 @@ router.delete('/posts/:id', function(req, res, next) {
 router.get('/posts/:id/comments', function(req, res, next) {
   Comment.find({ owner: req.params.id }).exec((err, comments) => {
     if (err) { return next(err); }
-    res.send(`COMMENTS FOR POST ID ${req.params.id}: ${comments}`)
+    res.send(`COMMENTS FOR POST ID ${req.params.id}: ${comments} \n`)
   })
 });
 

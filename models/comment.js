@@ -7,7 +7,7 @@ const CommentSchema = new Schema({
   author: { type: String, maxLength: 32, required: true },
   date: { type: String, required: true },
   // subcomments are optional
-  subcomments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+  // subcomments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   // edited prop?  would be nice to know when a comment has been editted
 })
 

@@ -27,7 +27,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', routes.view);
+app.use('/', routes.view);
 app.use('/api', routes.api);
 // app.use('/users', usersRouter);
 
@@ -48,6 +48,8 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+// This project is extremely poorly outlined, so the result be will be extremely poorly outlined, FUCK EM
 
 // Would be nice if could use the API to interact with our DB, views should only query the DB
 
