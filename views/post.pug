@@ -1,0 +1,30 @@
+extends layout 
+
+block content 
+  h1= post.title 
+  h4= post.content
+
+  h3 Comments(#{post.comments.length}):
+  for comment in post.comments 
+      div 
+        p= comment.comment 
+        p= comment.author 
+        p= comment.date
+
+  //- NEEDS A FORM FOR USERS TO POST COMMENTS
+  div
+    h3 New Comment:
+    //- USE BACK TICKS AND DOLLAR SIGN TO EVALUATE VARS INSIDE OF STRINGS
+    //- p= `/api/posts/${post._id}/comments`
+    form(method='POST' action=`/api/posts/${post._id}/comments`)
+      div(class='formInput')
+        label(for='author') Author:
+        input(type='text' name='author')
+      div(class='formInput')
+        label(for='comment') Comment:
+        //- input(type='text' name='comment')
+        textarea(name='comment' cols=50 rows=5)
+
+      hr
+
+      button(type='submit') NEW COMMENT
