@@ -6,5 +6,5 @@ html
   body
     block header 
       h1
-        a(href='/') Blog-API
+        a(href=(admin ? '/admin' : '/')) Blog-API
     block content

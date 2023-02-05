@@ -8,7 +8,7 @@ router.get('/', function (req, res, next) {
   fetch(`http://localhost:3000/api/posts`)
     .then((response) => response.json())
     .then((posts) => {
-      res.render('index', { title: 'ALL POSTS', posts })
+      res.render('index', { title: 'NOT HIDDEN POSTS', posts })
     });
 });
 

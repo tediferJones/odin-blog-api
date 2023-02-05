@@ -1,0 +1,31 @@
+extends layout 
+
+block content 
+  h1= title
+
+  //- form(method='POST' action='/api/posts')
+  form(method='post' action='')
+    label(for='title') TITLE: 
+    input(type='text' name='title' id='title' value=(post ? post.title : ''))
+
+    label(for='content') CONTENT: 
+    textarea(name='content' id='content')=(post ? post.content : '')
+
+    p Post Hidden Status: #{post.hidden}
+
+    if post.hidden
+      label(for='hiddenValTrue') True
+      input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 checked)
+
+      label(for='hiddenValFalse') False 
+      input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
+    else
+      label(for='hiddenValTrue') True
+      input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 )
+
+      label(for='hiddenValFalse') False 
+      input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
+
+    button(type='submit') MAKE NEW POST
+
+    //- ADD INPUT FOR HIDDEN, USE RADIO BUTTONS FOR TRUE AND FALSE

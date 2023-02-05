@@ -3,10 +3,12 @@ var router = express.Router();
 
 const api = require('./api');
 const view = require('./view');
+const admin = require('./admin');
 
 module.exports = {
   api,
-  view
+  view,
+  admin
 }
 
 // lets make two entirely seperate routes, one for API calls and one for views
