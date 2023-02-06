@@ -6,22 +6,24 @@ const fetch = require('node-fetch');
 //  - need post_create page, can be reused for the post update page
 // admin should also be able to delete specific comments on the post specific page
 
+// WE NEED SOME KIND OF LOGIN FORM
+
+// GET all posts, even hidden ones
 router.get('/', (req, res, next) => {
   fetch('http://localhost:3000/api/posts/all')
-    // .then((response) => response.json())
     .then((response) => response.json()) // apparently its important this remains as one line
     .then((posts) => {
-      // console.log(posts)
       res.render('index', { title:'ALL POSTS', posts, admin: true });
     });
 });
 
+// GET page to make a new Post
 router.get('/posts/new', (req, res, next) => {
   res.render('newPost', { title: 'NEW POST' })
 })
 
+// POST our new Post to the DB
 router.post('/posts/new', (req, res, next) => {
-  // fetch causes lung cancer, dont use it, at best it will turn you into a retard
   const fetchDetails = {
     method: 'POST',
     headers: { 'Content-Type' : 'application/json' },
@@ -30,32 +32,32 @@ router.post('/posts/new', (req, res, next) => {
       content: req.body.content,
     }),
   }
-  fetch(`http://localhost:3000/api/posts`, fetchDetails) // { method: 'POST', body })//: JSON.stringify(body) })
+  fetch(`http://localhost:3000/api/posts`, fetchDetails)
     .then((response) => response.json())
     .then((post) => {
-      // console.log(post)
       res.redirect('/admin/posts/' + post._id)
-    })
-})
+    });
+});
 
+// GET page for individual post
 router.get('/posts/:id', (req, res, next) => {
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
     .then((post) => {
       res.render('post', { title: 'SINGLE POST', post, admin: true });
-    })
-})
+    });
+});
 
+// POST a delete request for an individual post
 router.post('/posts/:id', (req, res, next) => {
   fetch(`http://localhost:3000/api/posts/${req.params.id}`, { method: 'DELETE' })
     .then((response) => response.json())
     .then((post) => {
-      // console.log(post)
-      // res.render('post', { title: 'This post has been deleted:', post, admin: true })
       res.redirect('/admin')
     }) 
 })
 
+// GET page to update a post
 router.get('/posts/:id/edit', (req, res, next) => {
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
@@ -64,30 +66,55 @@ router.get('/posts/:id/edit', (req, res, next) => {
     });
 });
 
+// POST our updated post
 router.post('/posts/:id/edit', (req, res, next) => {
-  // re-write this like our create post method
-  // need to make a PUT request with data
-  // console.log(req.body)
   const fetchDetails = {
     method: 'PUT',
     headers: { 'Content-Type' : 'application/json' },
     body: JSON.stringify({
       title: req.body.title,
       content: req.body.content,
-      hidden: !!req.body.hiddenVal
+      hidden: !!req.body.hiddenVal // can't get true/false from HTML so we use double bang to coerce a raw true/false value
     }),
   };
   fetch(`http://localhost:3000/api/posts/${req.params.id}`, fetchDetails)
     .then((response) => response.json())
     .then((updatedPost) => {
       res.redirect('/admin/posts/' + updatedPost._id)
-    })
-
-  // fetch(`http://localhost:3000/api/posts/${req.params.id}`, { method: 'PUT', body: req.body })
-  //   .then((response) => response.json())
-  //   .then((post) => {
-  //     res.render('post', { title: 'UPDATED POST', post, admin: true });
-  //   });
+    });
 });
+
+// POST a comment create request
+router.post('/posts/:id/comments', (req, res, next) => {
+  const fetchDetails = {
+    method: 'POST',
+    headers: { 'Content-Type' : 'application/json' },
+    body: JSON.stringify({
+      comment: req.body.comment,
+      author: req.body.author,
+    }),
+  };
+  fetch(`http:localhost:3000/api/posts/${req.params.id}/comments`, fetchDetails)
+    .then((response) => response.json())
+    .then((post) => {
+      res.redirect('/admin/posts/' + req.params.id)
+    })
+})
+
+// POST a comment delete request to our api
+router.post('/posts/:id/comments/:commentid', (req, res, next) => {
+  const fetchDetails = {
+    method: 'DELETE',
+    headers: { 'Content-Type' : 'application/json' },
+    // no body neccessary for delete request
+  }
+  fetch(`http://localhost:3000/api/posts/${req.params.id}/comments/${req.params.commentid}`, fetchDetails)
+    .then((response) => response.json())
+    .then((post) => {
+      res.redirect('/admin/posts/' + req.params.id)
+    })
+})
+
+// https://jasonwatmore.com/post/2021/09/05/fetch-http-post-request-examples
 
 module.exports = router;

@@ -2,7 +2,6 @@ extends layout
 
 block content
   h1= title
-  //- p= posts
   for post in posts 
     div 
       h3= post.title
@@ -10,10 +9,7 @@ block content
       p= post.date
       if admin 
         p Hidden: #{post.hidden}
-        //- You must use a form, so that you can use POST, PUT, or DELETE
-        //- a(href='api/posts/' + post._id + '/toggleHidden') Toggle Hidden Status
       h4 COMMENTS: #{post.comments.length}
-      //- a(href='/posts/' + post._id) LINK TO SPECIFIC PAGE
       a(href=(admin ? '/admin' : '') + '/posts/' + post._id) MORE
 
   if admin 

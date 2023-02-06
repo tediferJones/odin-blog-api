@@ -1,18 +1,15 @@
 
 const { Router } = require('express');
-const router = Router();
+const mongoose = require('mongoose')
 const { body, validationResult } = require('express-validator');
-
-// const User = require('../models/user');
 const Post = require('../models/post');
 
-const mongoose = require('mongoose')
+const router = Router();
 
 router.get('/posts', function(req, res, next) {
-  // returns all available post
+  // returns all available post, for user view
   Post.find({ hidden: false }).exec(function (err, posts) {
     if (err) { return next(err) }
-    // res.send(`${posts} \n`);
     res.send(posts);
   });
 });
@@ -40,8 +37,6 @@ router.post('/posts', [
 
   // save new post to DB
   (req, res, next) => {
-    console.log('STARTED POSTING INSIDE API')
-    console.log(req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.send('Missing title or content \n');
@@ -55,28 +50,10 @@ router.post('/posts', [
     });
     newPost.save((err) => {
       if (err) { return next(err); }
-      // res.send(`POSTED: ${newPost} \n`);
-      // res.redirect(`admin/posts/${newPost._id}`)
-      console.log('FINISHED POSTING INSIDE API')
       res.send(newPost)
     });
   }
 ]);
-
-//WRITE A SINGLE PUT METHOD
-// it should take all inputs, only applying this 'edited' fields when content or title change
-// router.put('/posts/:id', [
-//   body('title').trim().escape().isLength({ min: 1 }).withMessage('No Title Found'),
-//   body('content').trim().escape().isLength({ min: 1 }).withMessage('No Content Found'),
-
-//   (req, res, next) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.send({"value" : "yo that an error"})
-//     }
-//     Post.findById
-//   }
-// ])
 
 router.put('/posts/:id', [
   body('title').trim().escape().isLength({ min: 1 }).withMessage('No Title Found'),
@@ -104,35 +81,15 @@ router.put('/posts/:id', [
 
       post.save((err) => {
         if (err) { return(err); }
-        // res.send(`UPDATED POST: ${post} \n`)
         res.send(post)
       });
     });
   }
 ]);
 
-// this works, but there is a way to merge it with the put method above, providing dual functionality
-// router.put('/posts/:id/toggleHidden', (req, res, next) => {
-//   Post.findById(req.params.id).exec((err, post) => {
-//     if (err) { return next(err); }
-//     if (post.hidden) {
-//       post.hidden = false;
-//     } else {
-//       post.hidden = true;
-//     }
-//     post.save((err) => {
-//       if (err) { return next(err); }
-//       res.send(`HIDDEN SET TO: ${post.hidden}`)
-//     })
-//   })
-// })
-
 router.delete('/posts/:id', function(req, res, next) {
   Post.findByIdAndDelete(req.params.id).exec(function(err, post) {
     if (err) { return next(err); }
-    // res.send(`DELETED POST: ${post} \n`)
-    // res.render('post', { title: 'DELETED POST', post })
-    // res.redirect('/')
     res.send(post)
   })
 })
@@ -146,17 +103,6 @@ router.post('/posts/:id/comments', [
   body('comment').trim().escape().isLength({ min: 1 }).withMessage('Comment not found'),
   body('author').trim().escape().isLength({ min: 1 }).withMessage('Author not found'),  
   (req, res, next) => {
-    // WE NEED TO FIGURE OUT HOW TO DETERMINE SOURCE OF CONTENT
-    //  - if its a request from curl, return json, if its a request from our HTML, send HTML
-    //  - EASY FIX, get url property 
-    // console.log(req.get('Accept'));
-    // console.log(req.accepts('application/json'))
-    // console.log(req)
-    // console.log(req.originalUrl)
-    // console.log((req.baseUrl).includes('api'))
-
-    // compare a curl request to an browser request, find the difference
-    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.send('Missing Comment or Author')
@@ -165,7 +111,7 @@ router.post('/posts/:id/comments', [
       if (err) { return next(err); }
       // console.log(mongoose.Types.ObjectId().toString())
       const newComment = {
-        id: mongoose.Types.ObjectId().toString(), // NEED TO FIND A WAY TO ASIGN NUMBERS
+        id: mongoose.Types.ObjectId().toString(),
         comment: req.body.comment,
         author: req.body.author,
         date: new Date().toDateString() + ' at ' + new Date().toLocaleTimeString()
@@ -173,9 +119,7 @@ router.post('/posts/:id/comments', [
       post.comments.push(newComment)
       post.save((err) => {
         if (err) { return next(err); }
-        // res.send(`NEW COMMENT: ${JSON.stringify(newComment)}`)
-        // this is the good stuff
-        res.redirect(`/posts/${req.params.id}`)
+        res.send(post)
       });
     });
   }
@@ -184,6 +128,7 @@ router.post('/posts/:id/comments', [
 router.delete('/posts/:id/comments/:commentid', (req, res, next) => {
   Post.findById(req.params.id).exec((err, post) => {
     if (err) { return next(err); }
+
     // loop through comments to find the one with a matching id, and splice it from the array
     for (let i = 0; i < post.comments.length; i++) {
       if (post.comments[i].id === req.params.commentid) {
@@ -193,7 +138,7 @@ router.delete('/posts/:id/comments/:commentid', (req, res, next) => {
     };
     post.save((err) => {
       if (err) { return next(err); }
-      res.send(`DELETED COMMENT: ${JSON.stringify(post)}`)
+      res.send(post)
     });
   });
 });

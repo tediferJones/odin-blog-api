@@ -21,9 +21,27 @@ router.get('/posts/:id', (req, res, next) => {
     })
 });
 
-// I suppose we're done here, users should only be allowed to view posts and make comments, which can all be acomplished with these two routes
+router.post(`/posts/:id/comments`, (req, res, next) => {
+  // send new comment request to API
+  const fetchDetails = {
+    method: 'post',
+    headers: { 'Content-Type' : 'application/json' },
+    body: JSON.stringify({
+      comment: req.body.comment,
+      author: req.body.author,
+    }),
+  };
+  fetch(`http://localhost:3000/api/posts/${req.params.id}/comments`, fetchDetails)
+    .then((response) => response.json())
+    .then((post) => {
+      // res.render('post', { title:  })
+      res.redirect(`/posts/${req.params.id}`)
+    })
+})
+
+// I suppose we're done here, users should only be allowed to view posts and make comments, which can all be acomplished with these three routes
 
 // KNOWN ISSUES:
-//  - Posting a comment re-directs the user to /api/posts/POST-ID/comments, we want it to re-direct us back to /posts/POST-ID
+//  - we need GET and POST pages for "getAdminStatus", if we input the correct passphrase, we will get admin privileges and redirect to /admin
 
 module.exports = router;

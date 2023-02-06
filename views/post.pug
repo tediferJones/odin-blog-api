@@ -2,7 +2,6 @@ extends layout
 
 block content 
   h1= title
-  //- p=`${post.edited}`
 
   h1= post.title 
   h4= post.content
@@ -15,35 +14,34 @@ block content
   for comment in post.comments 
       div 
         p= comment.comment 
-        p= comment.author 
-        p= comment.date
+        p Author: #{comment.author} 
+        p Posted on #{comment.date}
+        //- p #{JSON.stringify(comment)}
+        if admin
+          form(method='post' action=`/admin/posts/${post._id}/comments/${comment.id}`)
+            button(type='submit') DELETE COMMENT
         
   if admin
     div 
       h4 ADMIN TOOLS
+
       p Is Hidden? #{post.hidden}
       a(href=`/admin/posts/${post._id}/edit`) EDIT POST
-      //- a(href=`/admin/posts/${}/delete`)
-      //- form(method='DELETE' action=`/api/posts/${post._id}`)
-      //-   button(type='submit') DELETE POST
-      //- form(method='post' action=`/api/posts/${post._id}`)
-      //-   input(type='hidden' name='_method' value='delete')
-      //-   button(type='submit' value='Delete') delete idk
+      
       form(method='post' action='')
         button(type='submit') DELETE POST
 
   div
     h3 New Comment:
     //- USE BACK TICKS AND DOLLAR SIGN TO EVALUATE VARS INSIDE OF STRINGS
-    //- p= `/api/posts/${post._id}/comments`
-    form(method='POST' action=`/api/posts/${post._id}/comments`)
+    //- p= `/api/posts/${post._id}/comments
+    
+    form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
       div(class='formInput')
         label(for='author') Author:
         input(type='text' name='author' id='author')
       div(class='formInput')
         label(for='comment') Comment:
         textarea(name='comment' cols=50 rows=5 id='comment')
-
       hr
-
       button(type='submit') NEW COMMENT
