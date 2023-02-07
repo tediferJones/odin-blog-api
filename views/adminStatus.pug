@@ -1,0 +1,25 @@
+extends layout 
+
+block content
+  div(class='postCard')
+    h1= title 
+    if admin 
+      p You have admin status
+    else 
+      p You DO NOT have admin status 
+
+    if admin 
+      form(method='post' action='')
+        div(class='postCardDetails')
+          label Revoke admin status?
+          input(type='hidden' name='revoke' value='revoke')
+          button(type='submit')
+            h4 Revoke
+    else
+      form(method='post' action='')
+        div(class='postCardDetails')
+          div(class='formInput')
+            label(for='password') What's the super secret password?
+            input(type='text' name='password' id='password')
+          button(type='submit')
+            h4 Submit

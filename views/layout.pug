@@ -3,8 +3,10 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Montserrat')
   body
-    block header 
-      h1
-        a(href=(admin ? '/admin' : '/')) Blog-API
+    block header
+      div(class='header')
+        h1
+          a(href=(admin ? '/admin' : '/')) My Blog
     block content

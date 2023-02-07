@@ -14,6 +14,8 @@ router.get('/posts', function(req, res, next) {
   });
 });
 
+// CONSIDER DELETEING THE ABOVE ROUTE, filter the posts inside the view routes instead of in the api
+
 // You will need a function to GET all posts, even ones that are hidden, so the admin can un-hide them if/when needed
 router.get('/posts/all', (req, res, next) => {
   Post.find({}).exec((err, posts) => {
@@ -42,9 +44,12 @@ router.post('/posts', [
       return res.send('Missing title or content \n');
       // would be nice if we could display error messages provided by express-validator
     }
+    console.log('INSIDE API')
+    console.log()
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
+      hidden: req.body.hidden,
       date: new Date().toDateString() + ' at ' + new Date().toLocaleTimeString(),
       comments: [], // new post cant already have comments, so just initialize an empty array
     });

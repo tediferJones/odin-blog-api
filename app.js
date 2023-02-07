@@ -27,6 +27,14 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+  // console.log(req.cookies)
+  if (req.cookies.isAdmin) {
+    res.locals.admin = true;
+  }
+  next();
+})
+
 app.use('/', routes.view);
 app.use('/admin', routes.admin);
 app.use('/api', routes.api);
@@ -51,8 +59,6 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-
-// Would be nice if could use the API to interact with our DB, views should only query the DB
 
 // CURL NOTES
 //  - curl defaults to GET http method, use -X to set other http methods like so: -X POST, -X PUT, -X DELETE

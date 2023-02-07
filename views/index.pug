@@ -2,15 +2,21 @@ extends layout
 
 block content
   h1= title
-  for post in posts 
-    div 
-      h3= post.title
-      p= post.content
-      p= post.date
-      if admin 
-        p Hidden: #{post.hidden}
-      h4 COMMENTS: #{post.comments.length}
-      a(href=(admin ? '/admin' : '') + '/posts/' + post._id) MORE
+  div(class='postContainer')
+    for post in posts 
+      div(class='postCard')
+        h2= post.title
+        h3= post.content
+        div(class='postCardDetails')
+          h4= post.date
+          if admin 
+            h4 Hidden: #{post.hidden}
+          h4 COMMENTS: #{post.comments.length}
+          a(href=(admin ? '/admin' : '') + '/posts/' + post._id class='moreButton') 
+            h4 MORE...
 
   if admin 
     a(href='admin/posts/new') NEW POST
+    a(href='/admin/status') Admin Status
+  else
+    a(href='/admin/status') Admin Status 

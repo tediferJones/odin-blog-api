@@ -1,4 +1,4 @@
-const { Router, json } = require('express');
+const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
 
@@ -13,7 +13,7 @@ router.get('/', (req, res, next) => {
   fetch('http://localhost:3000/api/posts/all')
     .then((response) => response.json()) // apparently its important this remains as one line
     .then((posts) => {
-      res.render('index', { title:'ALL POSTS', posts, admin: true });
+      res.render('index', { title:'ALL POSTS', posts, }); // admin: true });
     });
 });
 
@@ -24,12 +24,17 @@ router.get('/posts/new', (req, res, next) => {
 
 // POST our new Post to the DB
 router.post('/posts/new', (req, res, next) => {
+  console.log('MAKING NEW POST')
+  // console.log(req.body.hiddenVal)
+  // console.log(typeof(req.body.hiddenVal))
+  console.log(!!Number(req.body.hiddenVal))
   const fetchDetails = {
     method: 'POST',
     headers: { 'Content-Type' : 'application/json' },
     body: JSON.stringify({
       title: req.body.title,
       content: req.body.content,
+      hidden: !!Number(req.body.hiddenVal)
     }),
   }
   fetch(`http://localhost:3000/api/posts`, fetchDetails)
@@ -44,7 +49,7 @@ router.get('/posts/:id', (req, res, next) => {
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
     .then((post) => {
-      res.render('post', { title: 'SINGLE POST', post, admin: true });
+      res.render('post', { title: 'SINGLE POST', post, }); // admin: true });
     });
 });
 
@@ -62,7 +67,7 @@ router.get('/posts/:id/edit', (req, res, next) => {
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
     .then((post) => {
-      res.render('newPost', { title: 'EDIT POST', post, admin: true });
+      res.render('newPost', { title: 'EDIT POST', post, }); //admin: true });
     });
 });
 
@@ -74,7 +79,7 @@ router.post('/posts/:id/edit', (req, res, next) => {
     body: JSON.stringify({
       title: req.body.title,
       content: req.body.content,
-      hidden: !!req.body.hiddenVal // can't get true/false from HTML so we use double bang to coerce a raw true/false value
+      hidden: !!Number(req.body.hiddenVal) // can't get true/false from HTML so we use double bang to coerce a raw true/false value
     }),
   };
   fetch(`http://localhost:3000/api/posts/${req.params.id}`, fetchDetails)
@@ -113,6 +118,24 @@ router.post('/posts/:id/comments/:commentid', (req, res, next) => {
     .then((post) => {
       res.redirect('/admin/posts/' + req.params.id)
     })
+})
+
+router.get('/status', (req, res, next) => {
+  res.render('adminStatus', { title: 'Change admin status' })
+})
+
+router.post('/status', (req, res, next) => {
+  // simple and atrocious user auth, because that's not the point of this project
+
+  if (req.body.password === 'SuperSecretPassword') {
+    res.cookie('isAdmin', true)
+    res.redirect('/admin')
+  } else if (req.body.revoke === 'revoke') {
+    res.clearCookie('isAdmin')
+    res.redirect('/')
+  } else{
+    res.render('adminStatus', { title: 'Change admin status', errors: 'wrong password' })
+  }
 })
 
 // https://jasonwatmore.com/post/2021/09/05/fetch-http-post-request-examples

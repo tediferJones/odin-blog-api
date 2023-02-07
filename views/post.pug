@@ -1,47 +1,63 @@
 extends layout 
 
 block content 
-  h1= title
+  //- h1(class='bodyTag')= title
 
-  h1= post.title 
-  h4= post.content
-  p Posted on: #{post.date}
-  p Has been edited? #{post.edited}
-  if post.edited 
-    p Edited on: #{post.dateEdited}
+  div(class='postCard')
+    h2= post.title 
+    h3= post.content
+    div(class='postCardDetails')
+      h4 Posted on: #{post.date}
+      //- h4 Has been edited? #{post.edited}
+      if post.edited 
+        h4 Edited on: #{post.dateEdited}
 
-  h3 Comments(#{post.comments.length}):
-  for comment in post.comments 
-      div 
-        p= comment.comment 
-        p Author: #{comment.author} 
-        p Posted on #{comment.date}
-        //- p #{JSON.stringify(comment)}
-        if admin
-          form(method='post' action=`/admin/posts/${post._id}/comments/${comment.id}`)
-            button(type='submit') DELETE COMMENT
-        
   if admin
-    div 
-      h4 ADMIN TOOLS
+    div(class='postCard')
+      h3 ADMIN TOOLS
 
-      p Is Hidden? #{post.hidden}
-      a(href=`/admin/posts/${post._id}/edit`) EDIT POST
-      
-      form(method='post' action='')
-        button(type='submit') DELETE POST
+      div(class='postCardDetails')
+        //- h4 Is Hidden? #{post.hidden}
+        if post.hidden 
+          h4 This Post is Hidden 
+        else 
+          h4 This Post is NOT Hidden
+
+        a(href=`/admin/posts/${post._id}/edit` class='moreButton')
+          h4 EDIT POST
+        
+        form(method='post' action='')
+          button(type='submit')
+            h4 DELETE POST
+
+  div(class='comments')
+    h3(class='bodyTag') Comments(#{post.comments.length}):
+    for comment in post.comments 
+        div(class='postCard') 
+          h4= comment.comment 
+          div(class='postCardDetails')
+            h5 Author: #{comment.author} 
+            h5 Posted on #{comment.date}
+            if admin
+              form(method='post' action=`/admin/posts/${post._id}/comments/${comment.id}`)
+                button(type='submit') 
+                  h4 DELETE COMMENT
+        
 
   div
-    h3 New Comment:
+    //- h3(class='bodyTag') New Comment:
     //- USE BACK TICKS AND DOLLAR SIGN TO EVALUATE VARS INSIDE OF STRINGS
     //- p= `/api/posts/${post._id}/comments
-    
-    form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
-      div(class='formInput')
-        label(for='author') Author:
-        input(type='text' name='author' id='author')
-      div(class='formInput')
-        label(for='comment') Comment:
-        textarea(name='comment' cols=50 rows=5 id='comment')
-      hr
-      button(type='submit') NEW COMMENT
+    div(class='postCard')
+      h3(class='') New Comment:
+
+      form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
+        div(class='formInput')
+          label(for='author') Author:
+          input(type='text' name='author' id='author')
+        div(class='formInput')
+          label(for='comment') Comment:
+          textarea(name='comment' cols=50 rows=5 id='comment')
+        hr
+        button(type='submit') 
+          h4 NEW COMMENT

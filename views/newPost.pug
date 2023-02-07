@@ -1,31 +1,43 @@
 extends layout 
 
 block content 
-  h1= title
+  if admin
+    div(class='postCard')
+      h1= title
 
-  //- form(method='POST' action='/api/posts')
-  form(method='post' action='')
-    label(for='title') TITLE: 
-    input(type='text' name='title' id='title' value=(post ? post.title : ''))
+      form(method='post' action='')
+        div(class='formInput')
+          label(for='title') TITLE: 
+          input(type='text' name='title' id='title' value=(post ? post.title : ''))
 
-    label(for='content') CONTENT: 
-    textarea(name='content' id='content')=(post ? post.content : '')
+        div(class='formInput')
+          label(for='content') CONTENT: 
+          textarea(name='content' id='content' rows=25)=(post ? post.content : '')
 
-    p Post Hidden Status: #{post.hidden}
+        if post
+          p Post Hidden Status: #{post.hidden}
+        else 
+          p #{''}
 
-    if post.hidden
-      label(for='hiddenValTrue') True
-      input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 checked)
+        div(class='postCardDetails')
+          if post && post.hidden
+            div
+              label(for='hiddenValTrue') True
+              input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 checked)
 
-      label(for='hiddenValFalse') False 
-      input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
-    else
-      label(for='hiddenValTrue') True
-      input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 )
+            label(for='hiddenValFalse') False 
+            input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
+          else
+            div(class='radioButton')
+              //- div(class='radioButton')
+              label(for='hiddenValTrue') True
+              input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 )
+              
+              //- div(class='radioButton')
+              label(for='hiddenValFalse') False 
+              input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
 
-      label(for='hiddenValFalse') False 
-      input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
-
-    button(type='submit') MAKE NEW POST
-
-    //- ADD INPUT FOR HIDDEN, USE RADIO BUTTONS FOR TRUE AND FALSE
+          button(type='submit') 
+            h4 #{post ? 'Update Post' : 'Make New Post'}
+  else 
+    h1 You're not an admin, you're not supposed to be here
