@@ -12,7 +12,7 @@ block content
 
         div(class='formInput')
           label(for='content') CONTENT: 
-          textarea(name='content' id='content' rows=25)=(post ? post.content : '')
+          textarea(name='content' id='content' rows=15)=(post ? post.content : '')
 
         if post
           p Post Hidden Status: #{post.hidden}
@@ -21,19 +21,17 @@ block content
 
         div(class='postCardDetails')
           if post && post.hidden
-            div
+            div(class='radioButton')
               label(for='hiddenValTrue') True
               input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 checked)
 
-            label(for='hiddenValFalse') False 
-            input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
+              label(for='hiddenValFalse') False 
+              input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
           else
             div(class='radioButton')
-              //- div(class='radioButton')
               label(for='hiddenValTrue') True
               input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 )
               
-              //- div(class='radioButton')
               label(for='hiddenValFalse') False 
               input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
 

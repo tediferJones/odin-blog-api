@@ -6,22 +6,11 @@ const Post = require('../models/post');
 
 const router = Router();
 
-router.get('/posts', function(req, res, next) {
-  // returns all available post, for user view
-  Post.find({ hidden: false }).exec(function (err, posts) {
-    if (err) { return next(err) }
-    res.send(posts);
-  });
-});
-
-// CONSIDER DELETEING THE ABOVE ROUTE, filter the posts inside the view routes instead of in the api
-
-// You will need a function to GET all posts, even ones that are hidden, so the admin can un-hide them if/when needed
-router.get('/posts/all', (req, res, next) => {
+router.get('/posts', (req, res, next) => {
   Post.find({}).exec((err, posts) => {
     // console.log(posts)
     if (err) { return next(err); }
-    res.send(posts);
+    res.send(posts.reverse());
   });
 });
 
@@ -41,11 +30,11 @@ router.post('/posts', [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.send('Missing title or content \n');
-      // would be nice if we could display error messages provided by express-validator
+      // return res.send('Missing title or content \n');
+      return res.send({ "errorMessage": "Missing Title and/or Content" })
     }
-    console.log('INSIDE API')
-    console.log()
+    // console.log('INSIDE API')
+    // console.log()
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
@@ -68,8 +57,9 @@ router.put('/posts/:id', [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.send('Missing title or content \n');
+      // return res.send('Missing title or content \n');
       // would be nice if we could display error messages provided by express-validator
+      return res.send({ "errorMessage": "Missing Title and/or Content" })
     }
     Post.findById(req.params.id).exec(function (err, post) {
       if (err) { return next(err); }
@@ -110,7 +100,8 @@ router.post('/posts/:id/comments', [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.send('Missing Comment or Author')
+      // return res.send('Missing Comment or Author')
+      return res.send({ "errorMessage": "Missing author and/or comment" })
     }
     Post.findById(req.params.id).exec((err, post) => {
       if (err) { return next(err); }
@@ -134,7 +125,7 @@ router.delete('/posts/:id/comments/:commentid', (req, res, next) => {
   Post.findById(req.params.id).exec((err, post) => {
     if (err) { return next(err); }
 
-    // loop through comments to find the one with a matching id, and splice it from the array
+    // loop through comments to find the one with a matching id, then splice it from the comments array
     for (let i = 0; i < post.comments.length; i++) {
       if (post.comments[i].id === req.params.commentid) {
         post.comments.splice(i, 1)

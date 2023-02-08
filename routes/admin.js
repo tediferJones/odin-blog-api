@@ -6,28 +6,27 @@ const fetch = require('node-fetch');
 //  - need post_create page, can be reused for the post update page
 // admin should also be able to delete specific comments on the post specific page
 
-// WE NEED SOME KIND OF LOGIN FORM
-
 // GET all posts, even hidden ones
 router.get('/', (req, res, next) => {
-  fetch('http://localhost:3000/api/posts/all')
+  // if user is not admin, redirect to a similar user page
+  if (!req.cookies.isAdmin) { res.redirect('/'); }
+
+  fetch('http://localhost:3000/api/posts')
     .then((response) => response.json()) // apparently its important this remains as one line
     .then((posts) => {
-      res.render('index', { title:'ALL POSTS', posts, }); // admin: true });
+      // res.render('index', { title:'ALL POSTS', posts, }); // admin: true });
+      res.render('index', { posts });
     });
 });
 
 // GET page to make a new Post
 router.get('/posts/new', (req, res, next) => {
+  if (!req.cookies.isAdmin) { res.redirect('/'); }
   res.render('newPost', { title: 'NEW POST' })
 })
 
 // POST our new Post to the DB
 router.post('/posts/new', (req, res, next) => {
-  console.log('MAKING NEW POST')
-  // console.log(req.body.hiddenVal)
-  // console.log(typeof(req.body.hiddenVal))
-  console.log(!!Number(req.body.hiddenVal))
   const fetchDetails = {
     method: 'POST',
     headers: { 'Content-Type' : 'application/json' },
@@ -46,10 +45,13 @@ router.post('/posts/new', (req, res, next) => {
 
 // GET page for individual post
 router.get('/posts/:id', (req, res, next) => {
+  if (!req.cookies.isAdmin) { res.redirect(`/posts/${req.params.id}`); }
+
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
     .then((post) => {
-      res.render('post', { title: 'SINGLE POST', post, }); // admin: true });
+      // res.render('post', { title: 'SINGLE POST', post, }); // admin: true });
+      res.render('post', { post });
     });
 });
 
@@ -64,6 +66,8 @@ router.post('/posts/:id', (req, res, next) => {
 
 // GET page to update a post
 router.get('/posts/:id/edit', (req, res, next) => {
+  if (!req.cookies.isAdmin) { res.redirect(`/posts/${req.params.id}`); }
+
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
     .then((post) => {

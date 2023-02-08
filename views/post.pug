@@ -1,14 +1,11 @@
 extends layout 
 
 block content 
-  //- h1(class='bodyTag')= title
-
   div(class='postCard')
     h2= post.title 
     h3= post.content
     div(class='postCardDetails')
       h4 Posted on: #{post.date}
-      //- h4 Has been edited? #{post.edited}
       if post.edited 
         h4 Edited on: #{post.dateEdited}
 
@@ -17,7 +14,6 @@ block content
       h3 ADMIN TOOLS
 
       div(class='postCardDetails')
-        //- h4 Is Hidden? #{post.hidden}
         if post.hidden 
           h4 This Post is Hidden 
         else 
@@ -45,16 +41,17 @@ block content
         
 
   div
-    //- h3(class='bodyTag') New Comment:
     //- USE BACK TICKS AND DOLLAR SIGN TO EVALUATE VARS INSIDE OF STRINGS
     //- p= `/api/posts/${post._id}/comments
     div(class='postCard')
       h3(class='') New Comment:
+      //- p= commentData
+      p Comment Data: #{commentData}
 
       form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
         div(class='formInput')
           label(for='author') Author:
-          input(type='text' name='author' id='author')
+          input(type='text' name='author' id='author' value=(commentData ? commentData.author : ''))
         div(class='formInput')
           label(for='comment') Comment:
           textarea(name='comment' cols=50 rows=5 id='comment')
