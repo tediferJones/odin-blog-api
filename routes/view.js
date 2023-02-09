@@ -6,12 +6,13 @@ const router = Router();
 
 router.get('/', function (req, res, next) {
   // Displays all available posts (show all posts that are NOT hidden)
-  // idk if localhost will work when it not running locally, how do we dynamically adapt since we dont know what our url is gunna be
+  // Not sure if localhost will work when it not running locally, how do we dynamically adapt since we dont know what our url is gunna be
   fetch(`http://localhost:3000/api/posts`)
     .then((response) => response.json())
     .then((posts) => {
       const notHiddenPosts = posts.filter(post => post.hidden === false)
-      res.render('index', { title: 'Welcome!', posts: notHiddenPosts })
+      // res.render('index', { title: 'Welcome!', posts: notHiddenPosts })
+      res.render('index', { posts: notHiddenPosts })
     });
 });
 
@@ -30,55 +31,32 @@ router.post(`/posts/:id/comments`, [
 
   (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // fetch the specific post so we have something to render down here
-
-      // THIS FETCH COMMAND CAUSES ISSUES
-
-      fetch(`http://localhost:3000/api/posts/${req.params.id}`)
-        .then((response) => response.json())
-        .then(post => {
-          // console.log(req.body.author)
-          const commentData = { author: req.body.author, comment: req.body.comment }
-          console.log(commentData)
-          return res.render('post', { post, commentData, errors: errors.array() })
-        })
-      // res.render('post', { commentData: { author: req.body.author, comment: req.body.comment }, errors: errors.array() })
+    const commentData = {
+      author: req.body.author,
+      comment: req.body.comment,
     }
 
-    // send new comment request to API
-    const fetchDetails = {
-      method: 'post',
-      headers: { 'Content-Type' : 'application/json' },
-      body: JSON.stringify({
-        comment: req.body.comment,
-        author: req.body.author,
-      }),
-    };
-    fetch(`http://localhost:3000/api/posts/${req.params.id}/comments`, fetchDetails)
-      .then((response) => response.json())
-      .then((post) => {
-        res.redirect(`/posts/${req.params.id}`)
-      });
+    // if errors exist, send user back to the post page, with their comment data and errors, otherwise post the comment
+    if (!errors.isEmpty()) {
+      fetch(`http://localhost:3000/api/posts/${req.params.id}`)
+        .then((response) => response.json())
+        .then((post) => {
+          res.render('post', { post, commentData, errors: errors.array() })
+        })
+    } else {
+      // no errors found, so we post it to the API, which will post it to the DB
+      const fetchDetails = {
+        method: 'post',
+        headers: { 'Content-Type' : 'application/json' },
+        body: JSON.stringify(commentData)
+      };
+      fetch(`http://localhost:3000/api/posts/${req.params.id}/comments`, fetchDetails)
+        .then((response) => response.json())
+        .then((post) => {
+          res.redirect(`/posts/${req.params.id}`)
+        });
+    }
   } 
 ]);
-
-// OLD COMMENT POST METHOD, it works, just doesnt actually perform validation
-// router.post(`/posts/:id/comments`, (req, res, next) => {
-//   // send new comment request to API
-//   const fetchDetails = {
-//     method: 'post',
-//     headers: { 'Content-Type' : 'application/json' },
-//     body: JSON.stringify({
-//       comment: req.body.comment,
-//       author: req.body.author,
-//     }),
-//   };
-//   fetch(`http://localhost:3000/api/posts/${req.params.id}/comments`, fetchDetails)
-//     .then((response) => response.json())
-//     .then((post) => {
-//       res.redirect(`/posts/${req.params.id}`)
-//     });
-// });
 
 module.exports = router;

@@ -1,10 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
-
-// admin needs to be able to CRUD all posts
-//  - need post_create page, can be reused for the post update page
-// admin should also be able to delete specific comments on the post specific page
+const { body, validationResult } = require('express-validator');
 
 // GET all posts, even hidden ones
 router.get('/', (req, res, next) => {
@@ -14,7 +11,6 @@ router.get('/', (req, res, next) => {
   fetch('http://localhost:3000/api/posts')
     .then((response) => response.json()) // apparently its important this remains as one line
     .then((posts) => {
-      // res.render('index', { title:'ALL POSTS', posts, }); // admin: true });
       res.render('index', { posts });
     });
 });
@@ -26,22 +22,40 @@ router.get('/posts/new', (req, res, next) => {
 })
 
 // POST our new Post to the DB
-router.post('/posts/new', (req, res, next) => {
-  const fetchDetails = {
-    method: 'POST',
-    headers: { 'Content-Type' : 'application/json' },
-    body: JSON.stringify({
+router.post('/posts/new', [
+  body('title').trim().escape().isLength({ min: 1 }).withMessage('Post title not found'),
+  body('content').trim().escape().isLength({ min: 1 }).withMessage('Post content not found'),
+  body('hiddenVal').trim().escape().custom((value, { req }) => {
+    if (value !== '0' && value !== '1') {
+      throw new Error('Bad Hidden Value')
+    }
+    return true;
+  }),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    const postData = {
       title: req.body.title,
       content: req.body.content,
-      hidden: !!Number(req.body.hiddenVal)
-    }),
+      hidden: !!Number(req.body.hiddenVal),
+    }
+
+    if (!errors.isEmpty()) {
+      res.render('newPost', { title: 'NEW POST', post: postData, errors: errors.array() })
+    } else {
+      const fetchDetails = {
+        method: 'POST',
+        headers: { 'Content-Type' : 'application/json' },
+        body: JSON.stringify(postData)
+      }
+      fetch(`http://localhost:3000/api/posts`, fetchDetails)
+        .then((response) => response.json())
+        .then((post) => {
+          res.redirect('/admin/posts/' + post._id)
+        });
+    }
   }
-  fetch(`http://localhost:3000/api/posts`, fetchDetails)
-    .then((response) => response.json())
-    .then((post) => {
-      res.redirect('/admin/posts/' + post._id)
-    });
-});
+]);
 
 // GET page for individual post
 router.get('/posts/:id', (req, res, next) => {
@@ -50,7 +64,6 @@ router.get('/posts/:id', (req, res, next) => {
   fetch(`http://localhost:3000/api/posts/${req.params.id}`)
     .then((response) => response.json())
     .then((post) => {
-      // res.render('post', { title: 'SINGLE POST', post, }); // admin: true });
       res.render('post', { post });
     });
 });
@@ -76,39 +89,44 @@ router.get('/posts/:id/edit', (req, res, next) => {
 });
 
 // POST our updated post
-router.post('/posts/:id/edit', (req, res, next) => {
-  const fetchDetails = {
-    method: 'PUT',
-    headers: { 'Content-Type' : 'application/json' },
-    body: JSON.stringify({
+router.post('/posts/:id/edit', [
+  body('title').trim().escape().isLength({ min: 1 }).withMessage('Post title not found'),
+  body('content').trim().escape().isLength({ min: 1 }).withMessage('Post content not found'),
+  body('hiddenVal').trim().escape().custom((value, { req }) => {
+    if (value !== '0' && value !== '1') {
+      throw new Error('Bad Hidden Value')
+    }
+    return true;
+  }),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    const postData = {
       title: req.body.title,
       content: req.body.content,
-      hidden: !!Number(req.body.hiddenVal) // can't get true/false from HTML so we use double bang to coerce a raw true/false value
-    }),
-  };
-  fetch(`http://localhost:3000/api/posts/${req.params.id}`, fetchDetails)
-    .then((response) => response.json())
-    .then((updatedPost) => {
-      res.redirect('/admin/posts/' + updatedPost._id)
-    });
-});
-
-// POST a comment create request
-router.post('/posts/:id/comments', (req, res, next) => {
-  const fetchDetails = {
-    method: 'POST',
-    headers: { 'Content-Type' : 'application/json' },
-    body: JSON.stringify({
-      comment: req.body.comment,
-      author: req.body.author,
-    }),
-  };
-  fetch(`http:localhost:3000/api/posts/${req.params.id}/comments`, fetchDetails)
-    .then((response) => response.json())
-    .then((post) => {
-      res.redirect('/admin/posts/' + req.params.id)
-    })
-})
+      hidden: !!Number(req.body.hiddenVal),
+    }
+    // replace data in fetchDetails with this var
+    if (!errors.isEmpty()) {
+      fetch(`http://localhost:3000/api/posts/${req.params.id}`)
+        .then((response) => response.json())
+        .then((post) => {
+          res.render('newPost', { title: 'EDIT POST', post: postData, errors: errors.array() })
+        })
+    } else {
+      const fetchDetails = {
+        method: 'PUT',
+        headers: { 'Content-Type' : 'application/json' },
+        body: JSON.stringify(postData),
+      };
+      fetch(`http://localhost:3000/api/posts/${req.params.id}`, fetchDetails)
+        .then((response) => response.json())
+        .then((updatedPost) => {
+          res.redirect('/admin/posts/' + updatedPost._id)
+        });
+    }
+  }
+]);
 
 // POST a comment delete request to our api
 router.post('/posts/:id/comments/:commentid', (req, res, next) => {
@@ -128,20 +146,20 @@ router.get('/status', (req, res, next) => {
   res.render('adminStatus', { title: 'Change admin status' })
 })
 
-router.post('/status', (req, res, next) => {
-  // simple and atrocious user auth, because that's not the point of this project
+router.post('/status', [
+  body('password').trim().escape(),
 
-  if (req.body.password === 'SuperSecretPassword') {
-    res.cookie('isAdmin', true)
-    res.redirect('/admin')
-  } else if (req.body.revoke === 'revoke') {
-    res.clearCookie('isAdmin')
-    res.redirect('/')
-  } else{
-    res.render('adminStatus', { title: 'Change admin status', errors: 'wrong password' })
+  (req, res, next) => {
+    if (req.body.password === 'SuperSecretPassword') {
+      res.cookie('isAdmin', true)
+      res.redirect('/admin')
+    } else if (req.body.revoke === 'revoke') {
+      res.clearCookie('isAdmin')
+      res.redirect('/')
+    } else{
+      res.render('adminStatus', { title: 'Change admin status', error: 'Incorrect password' })
+    }
   }
-})
-
-// https://jasonwatmore.com/post/2021/09/05/fetch-http-post-request-examples
+]);
 
 module.exports = router;

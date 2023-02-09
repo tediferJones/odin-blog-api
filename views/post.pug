@@ -45,16 +45,20 @@ block content
     //- p= `/api/posts/${post._id}/comments
     div(class='postCard')
       h3(class='') New Comment:
-      //- p= commentData
-      p Comment Data: #{commentData}
+      if errors
+        p There was a problem posting your comment
+        ul
+          for error in errors
+            li= error.msg
 
-      form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
+      //- form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
+      form(method='post' action=`/posts/${post._id}/comments`)
         div(class='formInput')
           label(for='author') Author:
           input(type='text' name='author' id='author' value=(commentData ? commentData.author : ''))
         div(class='formInput')
           label(for='comment') Comment:
-          textarea(name='comment' cols=50 rows=5 id='comment')
+          textarea(name='comment' cols=50 rows=5 id='comment') #{commentData ? commentData.comment : ''}
         hr
         button(type='submit') 
           h4 NEW COMMENT

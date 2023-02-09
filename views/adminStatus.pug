@@ -6,7 +6,10 @@ block content
     if admin 
       p You have admin status
     else 
-      p You DO NOT have admin status 
+      p You DO NOT have admin status
+
+    if error 
+      p Error: #{error}
 
     if admin 
       form(method='post' action='')

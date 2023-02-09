@@ -9,4 +9,13 @@ html
       div(class='header')
         h1
           a(href=(admin ? '/admin' : '/')) My Blog
+        div(class='adminTools')
+          if admin 
+            div(class='adminTool')
+              a(href='admin/posts/new') Create New Post
+            div(class='adminTool')
+              a(href='/admin/status') Admin Portal
+          else
+            div(class='adminTool')
+              a(href='/admin/status') Admin Portal
     block content

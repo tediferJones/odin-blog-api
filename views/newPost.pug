@@ -5,6 +5,12 @@ block content
     div(class='postCard')
       h1= title
 
+      if errors
+        ul
+          for error in errors 
+            li= error.msg 
+
+
       form(method='post' action='')
         div(class='formInput')
           label(for='title') TITLE: 
@@ -18,6 +24,7 @@ block content
           p Post Hidden Status: #{post.hidden}
         else 
           p #{''}
+        //- replace the above lines with one P element that reads "Should this post be hidden?"
 
         div(class='postCardDetails')
           if post && post.hidden
@@ -36,6 +43,6 @@ block content
               input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
 
           button(type='submit') 
-            h4 #{post ? 'Update Post' : 'Make New Post'}
+            h4 #{title==='NEW POST' ? 'Make New Post' : 'Update Post'  }
   else 
     h1 You're not an admin, you're not supposed to be here
