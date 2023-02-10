@@ -10,7 +10,6 @@ const PostSchema = new Schema({
 
   edited: { type: Boolean, default: false },
   dateEdited: { type: String },
-  // author? seems redundant
 });
 
 module.exports = mongoose.model('Post', PostSchema);

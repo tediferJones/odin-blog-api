@@ -41,8 +41,6 @@ block content
         
 
   div
-    //- USE BACK TICKS AND DOLLAR SIGN TO EVALUATE VARS INSIDE OF STRINGS
-    //- p= `/api/posts/${post._id}/comments
     div(class='postCard')
       h3(class='') New Comment:
       if errors
@@ -51,7 +49,6 @@ block content
           for error in errors
             li= error.msg
 
-      //- form(method='post' action=(admin ? '/admin/' : '/') + `posts/${post._id}/comments`)
       form(method='post' action=`/posts/${post._id}/comments`)
         div(class='formInput')
           label(for='author') Author:

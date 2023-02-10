@@ -21,25 +21,30 @@ block content
           textarea(name='content' id='content' rows=15)=(post ? post.content : '')
 
         if post
-          p Post Hidden Status: #{post.hidden}
+          //- p Post Hidden Status: #{post.hidden}
+          if post.hidden 
+            p This Post is Hidden
+          else 
+            p This Post is NOT Hidden
         else 
-          p #{''}
+          //- p #{''}
+          p Should this post be hidden?
         //- replace the above lines with one P element that reads "Should this post be hidden?"
 
         div(class='postCardDetails')
           if post && post.hidden
             div(class='radioButton')
-              label(for='hiddenValTrue') True
+              label(for='hiddenValTrue') Hide Post
               input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 checked)
 
-              label(for='hiddenValFalse') False 
+              label(for='hiddenValFalse') Show Post
               input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
           else
             div(class='radioButton')
-              label(for='hiddenValTrue') True
+              label(for='hiddenValTrue') Hide Post
               input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 )
               
-              label(for='hiddenValFalse') False 
+              label(for='hiddenValFalse') Show Post
               input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
 
           button(type='submit') 
