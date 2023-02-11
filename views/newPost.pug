@@ -14,22 +14,19 @@ block content
       form(method='post' action='')
         div(class='formInput')
           label(for='title') TITLE: 
-          input(type='text' name='title' id='title' value=(post ? post.title : ''))
+          input(type='text' name='title' id='title' value!=(post ? post.title : ''))
 
         div(class='formInput')
           label(for='content') CONTENT: 
-          textarea(name='content' id='content' rows=15)=(post ? post.content : '')
+          textarea(name='content' id='content' rows=15)!=(post ? post.content : '')
 
         if post
-          //- p Post Hidden Status: #{post.hidden}
           if post.hidden 
             p This Post is Hidden
           else 
             p This Post is NOT Hidden
         else 
-          //- p #{''}
           p Should this post be hidden?
-        //- replace the above lines with one P element that reads "Should this post be hidden?"
 
         div(class='postCardDetails')
           if post && post.hidden

@@ -2,3 +2,4 @@ notes.txt
 node_modules/
 .env
 routes/users.js
+models/user.js

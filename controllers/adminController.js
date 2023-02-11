@@ -12,6 +12,26 @@ exports.allPosts_GET = (req, res, next) => {
     });
 };
 
+exports.hiddenPosts_GET = (req, res, next) => {
+  if (!req.cookies.isAdmin) { res.redirect('/'); }
+  fetch('http://localhost:3000/api/posts')
+    .then((response) => response.json())
+    .then((posts) => {
+      hiddenPosts = posts.filter(post => post.hidden === true)
+      res.render('index', { posts: hiddenPosts })
+    });
+};
+
+exports.publicPosts_GET = (req, res, next) => {
+  if (!req.cookies.isAdmin) { res.redirect('/'); }
+  fetch('http://localhost:3000/api/posts')
+    .then((response) => response.json())
+    .then((posts) => {
+      publicPosts = posts.filter(post => post.hidden === false)
+      res.render('index', { posts: publicPosts })
+    })
+};
+
 exports.newPost_GET = (req, res, next) => {
   if (!req.cookies.isAdmin) { res.redirect('/'); }
   res.render('newPost', { title: 'NEW POST' })

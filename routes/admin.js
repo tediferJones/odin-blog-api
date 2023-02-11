@@ -4,6 +4,8 @@ const adminController = require('../controllers/adminController');
 const router = Router();
 
 router.get('/', adminController.allPosts_GET);
+router.get('/posts/hidden', adminController.hiddenPosts_GET);
+router.get('/posts/public', adminController.publicPosts_GET);
 router.get('/posts/new', adminController.newPost_GET);
 router.post('/posts/new', adminController.newPost_POST);
 router.get('/posts/:id', adminController.post_GET);
