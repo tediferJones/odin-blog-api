@@ -1,4 +1,3 @@
-// var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -6,8 +5,6 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const routes = require('./routes');
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
 
 require('dotenv').config();
 mongoose.connect(process.env.mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -27,14 +24,16 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes.view);
-app.use('/api', routes.api);
-// app.use('/users', usersRouter);
+app.use(function(req, res, next) {
+  if (req.cookies.isAdmin) {
+    res.locals.admin = true;
+  }
+  next();
+})
 
-// catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
+app.use('/', routes.view);
+app.use('/admin', routes.admin);
+app.use('/api', routes.api);
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -48,13 +47,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-
-// This project is extremely poorly outlined, so the result be will be extremely poorly outlined, FUCK EM
-
-// Would be nice if could use the API to interact with our DB, views should only query the DB
-
-// CURL NOTES
-//  - curl defaults to GET http method, use -X to set other http methods like so: -X POST, -X PUT, -X DELETE
-//    WHEN USING THE API FOR POST AND PUT, YOU MUST INCLUDE THE PROPER HEADER BY USING -H
-//      -H "Content-Type:application/json"
-//  Example: curl -X POST -H 'Content-Type:application/json' localhost:3000/api/messages -d '{"title":"NEW POST TITLE","content":"NEW POST CONTENT"}'

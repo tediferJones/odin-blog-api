@@ -3,5 +3,13 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Montserrat')
   body
+    block header
+      div(class='header')
+        h1
+          a(href=(admin ? '/admin' : '/')) My Blog
+        div(class='adminTools')
+          div(class='adminTool')
+            a(href='/admin/status') Admin Portal
     block content

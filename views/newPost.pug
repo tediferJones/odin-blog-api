@@ -1,0 +1,50 @@
+extends layout 
+
+block content 
+  if admin
+    div(class='postCard')
+      h1= title
+
+      if errors
+        ul
+          for error in errors 
+            li= error.msg 
+
+
+      form(method='post' action='')
+        div(class='formInput')
+          label(for='title') TITLE: 
+          input(type='text' name='title' id='title' value!=(post ? post.title : ''))
+
+        div(class='formInput')
+          label(for='content') CONTENT: 
+          textarea(name='content' id='content' rows=15)!=(post ? post.content : '')
+
+        if post
+          if post.hidden 
+            p This Post is Hidden
+          else 
+            p This Post is NOT Hidden
+        else 
+          p Should this post be hidden?
+
+        div(class='postCardDetails')
+          if post && post.hidden
+            div(class='radioButton')
+              label(for='hiddenValTrue') Hide Post
+              input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 checked)
+
+              label(for='hiddenValFalse') Show Post
+              input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 )
+          else
+            div(class='radioButton')
+              label(for='hiddenValTrue') Hide Post
+              input(type='radio' name='hiddenVal' id='hiddenValTrue' value=1 )
+              
+              label(for='hiddenValFalse') Show Post
+              input(type='radio' name='hiddenVal' id='hiddenValFalse' value=0 checked)
+
+          button(type='submit') 
+            h4 #{title==='NEW POST' ? 'Make New Post' : 'Update Post'  }
+  else 
+    h1 You're not an admin, you're not supposed to be here

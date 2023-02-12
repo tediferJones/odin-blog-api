@@ -1,5 +1,31 @@
 extends layout
 
 block content
-  //- h1= title
-  //- p Welcome to #{title}
+
+  h1= title
+  div(class='postContainer')
+    if admin 
+      div(class='postCard')
+        h3 Admin Tools
+        div(class='postCardDetails')
+          a(href='/admin/posts/hidden' class='moreButton')
+            h4 Show All Hidden Posts
+          a(href='/admin/posts/new' class='moreButton') 
+            h4 Create New Post
+          a(href='/admin/posts/public' class='moreButton')
+            h4 Show All Public Posts 
+          
+    for post in posts 
+      div(class='postCard')
+        h2!= post.title
+        h3!= post.content 
+        div(class='postCardDetails')
+          h4= post.date
+          if admin 
+            if post.hidden 
+              h4 This Post is Hidden
+            else 
+              h4 This Post is NOT Hidden
+          h4 COMMENTS: #{post.comments.length}
+          a(href=(admin ? '/admin' : '') + '/posts/' + post._id class='moreButton') 
+            h4 More...

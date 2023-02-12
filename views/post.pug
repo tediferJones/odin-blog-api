@@ -1,18 +1,61 @@
 extends layout 
 
 block content 
-  h1= title 
-  //- p #{data.post}
-  h1= data.post.title
-  p= data.post.content
-  p= data.post.date
+  div(class='postCard')
+    h2!= post.title 
+    h3!= post.content
+    div(class='postCardDetails')
+      h4 Posted on: #{post.date}
+      if post.edited 
+        h4 Edited on: #{post.dateEdited}
 
-  h2 Comments: 
-  for comment in data.comments
-    div
-      p= comment.comment 
-      p= comment.author
-      p= comment.date
-    //- p #{comment}
+  if admin
+    div(class='postCard')
+      h3 ADMIN TOOLS
 
-  //- p #{data.comments}
+      div(class='postCardDetails')
+        if post.hidden 
+          h4 This Post is Hidden 
+        else 
+          h4 This Post is NOT Hidden
+
+        a(href=`/admin/posts/${post._id}/edit` class='moreButton')
+          h4 EDIT POST
+        
+        form(method='post' action='')
+          button(type='submit')
+            h4 DELETE POST
+
+  div(class='comments')
+    h3(class='bodyTag') Comments(#{post.comments.length}):
+    for comment in post.comments 
+        div(class='postCard') 
+          h4!= comment.comment 
+          div(class='postCardDetails')
+            h5 Author: #{comment.author} 
+            h5 Posted on #{comment.date}
+            if admin
+              form(method='post' action=`/admin/posts/${post._id}/comments/${comment.id}`)
+                button(type='submit') 
+                  h4 DELETE COMMENT
+        
+
+  div
+    div(class='postCard')
+      h3(class='') New Comment:
+      if errors
+        p There was a problem posting your comment
+        ul
+          for error in errors
+            li!= error.msg
+
+      form(method='post' action=`/posts/${post._id}/comments`)
+        div(class='formInput')
+          label(for='author') Author:
+          input(type='text' name='author' id='author' value=(commentData ? commentData.author : ''))
+        div(class='formInput')
+          label(for='comment') Comment:
+          textarea(name='comment' cols=50 rows=5 id='comment') #{commentData ? commentData.comment : ''}
+        hr
+        button(type='submit') 
+          h4 NEW COMMENT

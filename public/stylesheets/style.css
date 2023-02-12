@@ -1,8 +1,120 @@
-/* body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+:root {
+  --primary-color: #F2F3F4;
+  --secondary-color: #C1C7C9;
+  --accent-color: #BF3BCD;
+  --dark-accent-color: #962ba2;
+}
+
+body {
+  margin: 0;
+  background-color: var(--secondary-color);
+  font-family: Montserrat, sans-serif;
+  font-size: 20px;
+}
+
+.header {
+  padding: 1.5em;
+  /* height: 100%; */
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.adminTools {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.postContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.postCard {
+  margin: 4em;
+  padding: 2em;
+  background-color: var(--primary-color);
+}
+
+.postCardDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.moreButton {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  padding: 0 1.5em;
+}
+
+h1 {
+  margin: 0;
 }
 
 a {
-  color: #00B7FF;
-} */
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover,
+button:hover,
+.adminTool:hover {
+  background-color: var(--dark-accent-color);
+}
+
+h1 a:hover {
+  background-color: inherit;
+}
+
+.adminTool {
+  height: 100%;
+  padding: 0 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bodyTag {
+  margin: 0 4em;
+}
+
+button {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: inherit;
+
+  padding: 0 1.5em;
+}
+
+.formInput {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  height: 2em;
+  /* font-size: 24px; */
+}
+
+input,
+textarea {
+  font-size: 24px;
+}
+
+.radioButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BF3BCD STEEL PINK COLOR CODE */ 
+/* F2F3F4 LIGHT GREY COLOR CODE */ 
+/* https://www.pinterest.com/pin/278026976972934168/ MORE SHADES OF GREY */
