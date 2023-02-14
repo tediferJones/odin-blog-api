@@ -17,9 +17,6 @@ exports.post_GET = (req, res, next) => {
 };
 
 exports.post_POST = [
-  // body('title').trim().escape().isLength({ min: 1}).withMessage('No Title Found'),
-  // body('content').trim().escape().isLength({ min: 1 }).withMessage('No Content Found'),
-
   // Inputs must be unescaped then re-escaped, or else our data will be double escaped and we have no way to extract the information
   body('title').unescape().trim().escape().isLength({ min: 1}).withMessage('No Title Found'),
   body('content').unescape().trim().escape().isLength({ min: 1 }).withMessage('No Content Found'),
@@ -45,9 +42,6 @@ exports.post_POST = [
 ];
 
 exports.post_PUT = [
-  // body('title').trim().escape().isLength({ min: 1 }).withMessage('No Title Found'),
-  // body('content').trim().escape().isLength({ min: 1 }).withMessage('No Content Found'),
-
   // Inputs must be unescaped then re-escaped, or else our data will be double escaped and we have no way to extract the information
   body('title').unescape().trim().escape().isLength({ min: 1 }).withMessage('No Title Found'),
   body('content').unescape().trim().escape().isLength({ min: 1 }).withMessage('No Content Found'),
@@ -96,9 +90,6 @@ exports.post_DELETE = (req, res, next) => {
 // comments SHOULD NOT have a put method, comments can be deleted, but the admin should not be able to change your words
 
 exports.comment_POST = [
-  // body('comment').trim().escape().isLength({ min: 1 }).withMessage('Comment not found'),
-  // body('author').trim().escape().isLength({ min: 1 }).withMessage('Author not found'),
-
   // Inputs must be unescaped then re-escaped, or else our data will be double escaped and we have no way to extract the information
   body('comment').unescape().trim().escape().isLength({ min: 1 }).withMessage('Comment not found'),
   body('author').unescape().trim().escape().isLength({ min: 1 }).withMessage('Author not found'),
