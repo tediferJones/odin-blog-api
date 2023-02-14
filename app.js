@@ -53,7 +53,8 @@ app.use(function(err, req, res, next) {
 
 // PROBLEM WITH FETCHING LOCALHOST ON PRODUCTION
 //    railway seems to think we're listening on 127.0.0.0 instead of 0.0.0.0, here's a potential fix
-app.listen(process.env.PORT || 3000, '0.0.0.0');
+// app.listen(process.env.PORT || 3000);
+// console.log(app);
 
 module.exports = app;
 

@@ -4,11 +4,11 @@ const fetch = require('node-fetch');
 exports.allPosts_GET = (req, res, next) => {
   // Displays all available posts (show all posts that are NOT hidden)
   // Not sure if localhost will work when it not running locally, how do we dynamically adapt since we dont know what our url is gunna be
-  fetch(`http://localhost:3000/api/posts`)
+  // fetch(`http://localhost:3000/api/posts`)
+  fetch(`http://odin-blog-api-production.up.railway.app/api/posts`)
     .then((response) => response.json())
     .then((posts) => {
       const notHiddenPosts = posts.filter(post => post.hidden === false)
-      // res.render('index', { title: 'Welcome!', posts: notHiddenPosts })
       res.render('index', { posts: notHiddenPosts })
     });
 };
